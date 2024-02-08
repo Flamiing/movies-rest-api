@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "First rest api",
   "main": "app.js",
+  "type": "module",
   "scripts": {
     "start": "node app.js",
     "dev": "node --watch app.js"

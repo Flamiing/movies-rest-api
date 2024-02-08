@@ -48,3 +48,5 @@ Content-Type: application/json
 {
   "year": 1993
 }
+###
+DELETE http://localhost:3000/api/movies/dcdd0fad-a94c-4810-8acc-5f108d3b18c3
