@@ -6,7 +6,7 @@ GET http://localhost:3000/api/movies
 GET http://localhost:3000/api/movies/6330cd44-c757-11ee-82e3-7e8b40a06003
 
 ### Get movie by genre:
-GET http://localhost:3000/api/movies?genre=CRIME
+GET http://localhost:3000/api/movies?genre=DRAMA
 
 ### Create a movie with POST:
 POST http://localhost:3000/api/movies
