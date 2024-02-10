@@ -6,7 +6,7 @@ GET http://localhost:3000/api/movies
 GET http://localhost:3000/api/movies/6330cd44-c757-11ee-82e3-7e8b40a06003
 
 ### Get movie by genre:
-GET http://localhost:3000/api/movies?genre=drama
+GET http://localhost:3000/api/movies?genre=CRIME
 
 ### Create a movie with POST:
 POST http://localhost:3000/api/movies
@@ -36,16 +36,16 @@ Content-Type: application/json
 }
 
 ### Update part of a movie:
-PATCH http://localhost:3000/api/movies/4b527270-c830-11ee-a3ce-2a1d1101d31e
+PATCH http://localhost:3000/api/movies/4f7bce96-c835-11ee-a3ce-2a1d1101d31e
 Content-Type: application/json
 
 {
   "year": 1975,
   "genre": [
-    "Crime",
-    "Drama"
+    "Sci-Fi",
+    "Adventure"
   ]
 }
 
 ### Delete a movie:
-DELETE http://localhost:3000/api/movies/9586cd60-c82f-11ee-a3ce-2a1d1101d31e
+DELETE http://localhost:3000/api/movies/4f7bce96-c835-11ee-a3ce-2a1d1101d31e

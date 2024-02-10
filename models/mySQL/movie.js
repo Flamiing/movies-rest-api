@@ -76,23 +76,11 @@ export class MovieModel {
 
   static async #_addGenresToMovie({ id, genres }) {
     try {
-      const [[movie]] = await connection.query(
-        'SELECT title FROM movie WHERE BIN_TO_UUID(id) = ?;',
-        [id]
-      )
-
-      console.log(movie)
-      console.log(genres)
-      
-      const { title } = movie
-      console.log(title)
-
       const genresPromises = await genres.map(async (movieGenre) => {
         await connection.query(
           `INSERT INTO movie_genres
-            VALUES ((SELECT id FROM movie WHERE title = ? LIMIT 1),
-            (SELECT id FROM genre WHERE name = ? LIMIT 1));`,
-          [title, movieGenre]
+            VALUES (UUID_TO_BIN(?), (SELECT id FROM genre WHERE name = ?));`,
+          [id, movieGenre]
         )
       })
       await Promise.all(genresPromises)
