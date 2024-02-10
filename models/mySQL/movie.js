@@ -77,7 +77,7 @@ export class MovieModel {
   static async #_addGenresToMovie({ id, genres }) {
     try {
       const [[movie]] = await connection.query(
-        'SELECT title FROM movie WHERE BIN_TO_UUID(id) = ?',
+        'SELECT title FROM movie WHERE BIN_TO_UUID(id) = ?;',
         [id]
       )
 
@@ -197,7 +197,7 @@ export class MovieModel {
       await connection.query(
         `UPDATE movie
           SET ${key} = ?
-          WHERE BIN_TO_UUID(id) = ?`,
+          WHERE BIN_TO_UUID(id) = ?;`,
         [value, id]
       )
     })
@@ -209,7 +209,7 @@ export class MovieModel {
         'DELETE FROM movie_genres WHERE BIN_TO_UUID(movie_id) = ?;',
         [id]
       )
-      
+
       await this.#_addGenresToMovie({ id: id, genres: parsedGenres })
     }
 
