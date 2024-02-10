@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start:mysql": "node --watch server-with-mysql.js",
-    "start:local": "node --watch server-with-local.js"
+    "start:local": "node --watch server-with-local.js",
+    "start": "node server-with-mysql.js"
   },
   "keywords": [
     "rest",
