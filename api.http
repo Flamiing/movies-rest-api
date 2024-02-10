@@ -3,7 +3,7 @@
 GET http://localhost:3000/api/movies  
 
 ### Get movie by ID:
-GET http://localhost:3000/api/movies/542a0c28-c7d6-11ee-82e3-7e8b40a06003
+GET http://localhost:3000/api/movies/6330cd44-c757-11ee-82e3-7e8b40a06003
 
 ### Get movie by genre:
 GET http://localhost:3000/api/movies?genre=drama
@@ -13,7 +13,7 @@ POST http://localhost:3000/api/movies
 Content-Type: application/json
 
 {
-  "title": "The Godfather",
+  "title": "test",
   "year": 1975,
   "director": "Francis Ford Coppola",
   "duration": 175,
@@ -35,12 +35,17 @@ Content-Type: application/json
  
 }
 
-### Actualizar una parte de la pelicula
-PATCH http://localhost:3000/api/movies/dcdd0fad-a94c-4810-8acc-5f108d3b18c3
+### Update part of a movie:
+PATCH http://localhost:3000/api/movies/4b527270-c830-11ee-a3ce-2a1d1101d31e
 Content-Type: application/json
 
 {
-  "year": 1993
+  "year": 1975,
+  "genre": [
+    "Crime",
+    "Drama"
+  ]
 }
-###
-DELETE http://localhost:3000/api/movies/542a0c28-c7d6-11ee-82e3-7e8b40a06003
+
+### Delete a movie:
+DELETE http://localhost:3000/api/movies/9586cd60-c82f-11ee-a3ce-2a1d1101d31e

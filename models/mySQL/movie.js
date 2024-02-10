@@ -17,7 +17,7 @@ const connection = await mysql.createConnection(config)
 
 export class MovieModel {
   // Gets movies from database and adds the respective genres
-  static async #_getMoviesWithGenres(movies) {
+  static async #_getMoviesWithGenres({ movies }) {
     const moviesPromises = movies.map(async (movie) => {
       if (!movie) return
       const [genres_id] = await connection.query(
@@ -43,7 +43,7 @@ export class MovieModel {
   }
 
   // Gets movies matching the given genre
-  static async #_getFilteredByGenre(genre) {
+  static async #_getFilteredByGenre({ genre }) {
     const lowerCaseGenre = genre.toLowerCase()
 
       const [genres] = await connection.query(
@@ -71,13 +71,40 @@ export class MovieModel {
       const movies = await Promise.all(moviesPormises)
       if (movies.length === 0) return []
 
-      return await this.#_getMoviesWithGenres(movies)
+      return await this.#_getMoviesWithGenres({ movies: movies })
+  }
+
+  static async #_addGenresToMovie({ id, genres }) {
+    try {
+      const [[movie]] = await connection.query(
+        'SELECT title FROM movie WHERE BIN_TO_UUID(id) = ?',
+        [id]
+      )
+
+      console.log(movie)
+      console.log(genres)
+      
+      const { title } = movie
+      console.log(title)
+
+      const genresPromises = await genres.map(async (movieGenre) => {
+        await connection.query(
+          `INSERT INTO movie_genres
+            VALUES ((SELECT id FROM movie WHERE title = ? LIMIT 1),
+            (SELECT id FROM genre WHERE name = ? LIMIT 1));`,
+          [title, movieGenre]
+        )
+      })
+      await Promise.all(genresPromises)
+    } catch (e) {
+      console.error('Error adding genres to movie')
+    }
   }
 
   // Gets all movies or filtered by genre
   static async getAll ({ genre }) {
     if (genre) {
-      return await this.#_getFilteredByGenre(genre)
+      return await this.#_getFilteredByGenre({ genre: genre })
     }
     
     const [movies] = await connection.query(
@@ -86,7 +113,7 @@ export class MovieModel {
     
     if (movies.length === 0) return []
 
-    return await this.#_getMoviesWithGenres(movies)
+    return await this.#_getMoviesWithGenres({ movies: movies })
   }
 
   // Gets movie matching given ID
@@ -98,19 +125,19 @@ export class MovieModel {
 
     if (movie.length === 0) return null
 
-    return await this.#_getMoviesWithGenres(movie)
+    return await this.#_getMoviesWithGenres({ movies: movie })
   }
 
   // Creates new movie into the database
   static async create ({ input }) {
     const {
-      genre,
       title,
       year,
       director,
       duration,
       poster,
-      rate
+      rate,
+      genre
     } = input
 
     const [uuidResult] = await connection.query('SELECT UUID() uuid;')
@@ -123,15 +150,8 @@ export class MovieModel {
         [uuid, title, year, director, duration, poster, rate]
       )
 
-      const genresPromises = await genre.map(async (movieGenre) => {
-        await connection.query(
-          `INSERT INTO movie_genres
-            VALUES ((SELECT id FROM movie WHERE title = ? LIMIT 1),
-            (SELECT id FROM genre WHERE name = ? LIMIT 1));`,
-          [title, movieGenre]
-        )
-      })
-      await Promise.all(genresPromises)
+      await this.#_addGenresToMovie({ id: uuid, genres: genre })
+      
     } catch (e) {
       console.error('Error creating movie')
     }
@@ -160,6 +180,40 @@ export class MovieModel {
 
   // Updates movie matching the given ID
   static async update ({ id, input }) {
+    const parsedGeneralInput = {
+      title: input.title,
+      year: input.year,
+      director: input.director,
+      duration: input.duration,
+      poster: input.poster,
+      rate: input.rate,
+    }
 
+    const parsedGenres = input.genre
+
+    const generalUpdatePromises = Object.keys(parsedGeneralInput).map(async (key) => {
+      const value = parsedGeneralInput[key]
+      if (!value) return
+      await connection.query(
+        `UPDATE movie
+          SET ${key} = ?
+          WHERE BIN_TO_UUID(id) = ?`,
+        [value, id]
+      )
+    })
+
+    await Promise.all(generalUpdatePromises)
+
+    if (parsedGenres) {
+      await connection.query(
+        'DELETE FROM movie_genres WHERE BIN_TO_UUID(movie_id) = ?;',
+        [id]
+      )
+      
+      await this.#_addGenresToMovie({ id: id, genres: parsedGenres })
+    }
+
+    const movie = this.getById({ id: id })
+    return movie
   }
 }
