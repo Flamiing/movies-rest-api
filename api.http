@@ -21,7 +21,8 @@ Content-Type: application/json
   "genre": [
     "Crime",
     "Drama"
-  ]
+  ],
+  "rate": 5.0
 }
 
 ### Create a bad request with POST:
