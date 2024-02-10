@@ -1,11 +1,9 @@
 import mysql from 'mysql2/promise'
-import dotenv from 'dotenv'
 
 // Get environment variables
-dotenv.config()
-const { MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DB } = process.env
+const { MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DB, DATABASE_URL } = process.env
 
-const config = {
+const DEFAULT_CONFIG = {
   host: MYSQL_HOST,
   port: MYSQL_PORT,
   user: MYSQL_USER,
@@ -13,7 +11,9 @@ const config = {
   database: MYSQL_DB
 }
 
-const connection = await mysql.createConnection(config)
+const connectionConfig = DATABASE_URL ?? DEFAULT_CONFIG
+
+const connection = await mysql.createConnection(connectionConfig)
 
 export class MovieModel {
   // Gets movies from database and adds the respective genres
