@@ -142,7 +142,20 @@ export class MovieModel {
 
   // Deletes movie matching the given ID
   static async delete ({ id }) {
-    
+    const movie = await this.getById({ id: id })
+    if (!movie) return false
+
+    await connection.query(
+      'DELETE FROM movie_genres WHERE BIN_TO_UUID(movie_id) = ?;',
+      [id]
+    )
+
+    await connection.query(
+      'DELETE FROM movie WHERE BIN_TO_UUID(id) = ?;',
+      [id]
+    )
+
+    return true
   }
 
   // Updates movie matching the given ID

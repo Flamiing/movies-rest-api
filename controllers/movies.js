@@ -38,7 +38,7 @@ export class MovieController {
     return res.json({ message: 'Movie deleted' })
   }
 
-  // Controlls PATH request to update movie matching given ID
+  // Controlls PATCH request to update movie matching given ID
   static async update (req, res) {
     const result = validatePartialMovie(req.body)
     if (!result.success) {
